@@ -2,35 +2,48 @@
 
 import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { siteConfig } from "@/config/site";
 
 const STORAGE_KEY = "ft-announcement-dismissed";
+const EVENT = "ft-announcement-change";
+let memoryDismissed = false;
+
+function subscribe(callback: () => void) {
+  window.addEventListener(EVENT, callback);
+  return () => window.removeEventListener(EVENT, callback);
+}
+
+function getSnapshot(): boolean {
+  if (memoryDismissed) return true;
+  try {
+    return window.sessionStorage.getItem(STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function getServerSnapshot(): boolean {
+  return false;
+}
 
 /**
  * Minimal, dismissible announcement bar. Dismissal is remembered for the
  * session only, so a returning visitor sees it again in a new session.
  */
 export function AnnouncementBar() {
-  const [visible, setVisible] = useState(true);
+  const dismissed = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  useEffect(() => {
-    try {
-      if (window.sessionStorage.getItem(STORAGE_KEY) === "1") setVisible(false);
-    } catch {
-      /* storage unavailable: keep the bar visible */
-    }
-  }, []);
-
-  if (!visible) return null;
+  if (dismissed) return null;
 
   const dismiss = () => {
-    setVisible(false);
+    memoryDismissed = true;
     try {
       window.sessionStorage.setItem(STORAGE_KEY, "1");
     } catch {
-      /* ignore */
+      /* storage unavailable: dismissal lasts until the page is reloaded */
     }
+    window.dispatchEvent(new Event(EVENT));
   };
 
   return (

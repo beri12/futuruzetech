@@ -1,7 +1,25 @@
 "use client";
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import type { ElementType, ReactNode } from "react";
+import type { ReactNode } from "react";
+
+/**
+ * Motion elements are created once at module level (never during render),
+ * so `as` is limited to this set of common layout tags.
+ */
+const motionTags = {
+  div: motion.div,
+  section: motion.section,
+  article: motion.article,
+  ul: motion.ul,
+  ol: motion.ol,
+  li: motion.li,
+  header: motion.header,
+  figure: motion.figure,
+  p: motion.p,
+} as const;
+
+export type MotionTag = keyof typeof motionTags;
 
 /**
  * Shared motion tokens so every reveal on the site uses the same timing.
@@ -20,7 +38,7 @@ export const staggerVariants = (stagger = 0.08, delay = 0): Variants => ({
 
 type RevealProps = {
   children: ReactNode;
-  as?: ElementType;
+  as?: MotionTag;
   className?: string;
   delay?: number;
   /** Reveal once the element enters the viewport (default) or immediately on mount. */
@@ -41,7 +59,7 @@ export function Reveal({
   amount = 0.2,
 }: RevealProps) {
   const reduce = useReducedMotion();
-  const Comp = motion.create(as as "div");
+  const Comp = motionTags[as] as typeof motion.div;
 
   if (reduce) {
     return <Comp className={className}>{children}</Comp>;
@@ -69,7 +87,7 @@ export function Reveal({
 
 type StaggerProps = {
   children: ReactNode;
-  as?: ElementType;
+  as?: MotionTag;
   className?: string;
   stagger?: number;
   delay?: number;
@@ -81,7 +99,7 @@ type StaggerProps = {
  */
 export function Stagger({ children, as = "div", className, stagger = 0.08, delay = 0, amount = 0.15 }: StaggerProps) {
   const reduce = useReducedMotion();
-  const Comp = motion.create(as as "div");
+  const Comp = motionTags[as] as typeof motion.div;
   if (reduce) return <Comp className={className}>{children}</Comp>;
   return (
     <Comp
@@ -102,11 +120,11 @@ export function StaggerItem({
   className,
 }: {
   children: ReactNode;
-  as?: ElementType;
+  as?: MotionTag;
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  const Comp = motion.create(as as "div");
+  const Comp = motionTags[as] as typeof motion.div;
   if (reduce) return <Comp className={className}>{children}</Comp>;
   return (
     <Comp className={className} variants={revealVariants}>

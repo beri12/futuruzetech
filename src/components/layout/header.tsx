@@ -28,10 +28,13 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close the mobile menu whenever the route changes.
-  useEffect(() => {
+  // Close the mobile menu whenever the route changes (derived during render,
+  // the React-recommended alternative to a setState-in-effect).
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
     setMobileOpen(false);
-  }, [pathname]);
+  }
 
   return (
     <header
