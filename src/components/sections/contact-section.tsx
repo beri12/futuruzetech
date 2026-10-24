@@ -3,6 +3,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/motion/reveal";
 import { ContactForm } from "@/components/forms/contact-form";
 import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
 
 const nextSteps = [
   "We reply within two working days.",
@@ -27,10 +28,15 @@ export function ContactSection({
   headingLevel = "h2",
 }: ContactSectionProps) {
   const { email, phone, location } = siteConfig.contact;
+  // As a page's main heading the section is above the fold: use the CSS
+  // entrance so it paints before hydration instead of a scroll reveal.
+  const aboveFold = headingLevel === "h1";
+  const Intro = aboveFold ? "div" : Reveal;
+  const FormWrap = aboveFold ? "div" : Reveal;
   return (
     <section id="contact" aria-labelledby="contact-title" className="bg-grid relative bg-ink">
       <Container className="section-y flex flex-wrap items-start gap-14">
-        <Reveal className="flex max-w-[480px] flex-1 basis-[360px] flex-col gap-5">
+        <Intro className={cn("flex max-w-[480px] flex-1 basis-[360px] flex-col gap-5", aboveFold && "hero-enter")}>
           <SectionHeading
             as={headingLevel}
             eyebrow={eyebrow}
@@ -81,10 +87,10 @@ export function ContactSection({
               ) : null}
             </dl>
           ) : null}
-        </Reveal>
-        <Reveal delay={0.1} className="min-w-0 flex-1 basis-[520px]">
+        </Intro>
+        <FormWrap className="min-w-0 flex-1 basis-[520px]">
           <ContactForm defaultService={defaultService} />
-        </Reveal>
+        </FormWrap>
       </Container>
     </section>
   );

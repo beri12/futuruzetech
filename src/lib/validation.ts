@@ -33,27 +33,27 @@ const budgetValues = budgetOptions.map((option) => option.value) as [string, ...
 const timelineValues = timelineOptions.map((option) => option.value) as [string, ...string[]];
 
 export const contactSchema = z.object({
-  name: z.string().trim().min(2, "Please enter your full name.").max(120, "Name is too long."),
+  name: z.string("Please enter your full name.").trim().min(2, "Please enter your full name.").max(120, "Name is too long."),
   email: z.email("Please enter a valid email address.").trim().max(200),
   company: z.string().trim().max(160, "Company name is too long.").optional().or(z.literal("")),
   service: z.enum(serviceValues, { message: "Please choose a service." }),
   budget: z.enum(budgetValues, { message: "Please choose a budget range." }),
   timeline: z.enum(timelineValues, { message: "Please choose a timeline." }),
   message: z
-    .string()
+    .string("Please describe your project.")
     .trim()
     .min(20, "Tell us a little more (at least 20 characters).")
     .max(4000, "Please keep the description under 4,000 characters."),
   consent: z.literal(true, { message: "Please confirm that we may contact you." }),
   /** Honeypot: real users never see or fill this field. */
-  website: z.string().max(0).optional().or(z.literal("")),
+  website: z.string().optional(),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;
 
 export const newsletterSchema = z.object({
   email: z.email("Please enter a valid email address.").trim().max(200),
-  website: z.string().max(0).optional().or(z.literal("")),
+  website: z.string().optional(),
 });
 
 export type NewsletterInput = z.infer<typeof newsletterSchema>;

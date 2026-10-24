@@ -1,12 +1,7 @@
 import type { LucideIcon } from "lucide-react";
+import type { ServiceSlug } from "@/data/service-slugs";
 
-export type ServiceSlug =
-  | "web-development"
-  | "software-development"
-  | "mobile-app-development"
-  | "ai-development"
-  | "digital-marketing"
-  | "ui-ux-design";
+export type { ServiceSlug };
 
 export type Faq = {
   question: string;

@@ -36,13 +36,15 @@ export function HeroVisual() {
           const { fine } = context.conditions as { fine: boolean };
 
           const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-          tl.from("[data-hero-panel]", { y: 40, opacity: 0, duration: 1, stagger: 0.12 }, 0.1)
+          // Movement only (no opacity) so the panels stay painted before
+          // hydration and do not delay the Largest Contentful Paint.
+          tl.from("[data-hero-panel]", { y: 40, duration: 1, stagger: 0.12 }, 0.1)
             .from(
               "[data-hero-bar]",
               { scaleY: 0, transformOrigin: "bottom", duration: 0.8, stagger: 0.05 },
               0.5,
             )
-            .from("[data-hero-row]", { x: -12, opacity: 0, duration: 0.5, stagger: 0.08 }, 0.7)
+            .from("[data-hero-row]", { x: -12, duration: 0.5, stagger: 0.08 }, 0.7)
             .fromTo(
               "[data-hero-sweep]",
               { xPercent: -120, opacity: 0 },

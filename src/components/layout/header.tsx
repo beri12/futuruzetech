@@ -105,6 +105,8 @@ function DropdownItem({ item, active }: { item: NavItem; active: boolean }) {
   const panelId = useId();
   const reduce = useReducedMotion();
   const closeTimer = useRef<number | null>(null);
+  // A hover already opened the menu; the click that follows must not close it.
+  const openedByHover = useRef(false);
 
   const scheduleClose = useCallback(() => {
     closeTimer.current = window.setTimeout(() => setOpen(false), 120);
@@ -138,9 +140,13 @@ function DropdownItem({ item, active }: { item: NavItem; active: boolean }) {
       className="relative"
       onMouseEnter={() => {
         cancelClose();
+        openedByHover.current = true;
         setOpen(true);
       }}
-      onMouseLeave={scheduleClose}
+      onMouseLeave={() => {
+        openedByHover.current = false;
+        scheduleClose();
+      }}
       onBlur={(event) => {
         if (!ref.current?.contains(event.relatedTarget as Node)) setOpen(false);
       }}
@@ -149,7 +155,14 @@ function DropdownItem({ item, active }: { item: NavItem; active: boolean }) {
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          if (openedByHover.current) {
+            openedByHover.current = false;
+            setOpen(true);
+            return;
+          }
+          setOpen((value) => !value);
+        }}
         className={cn(
           "inline-flex min-h-11 items-center gap-1.5 px-0.5 text-sm font-medium transition-colors duration-base",
           active ? "text-fg shadow-[inset_0_-2px_0_var(--color-brand)]" : "text-fg-soft hover:text-fg",

@@ -72,7 +72,7 @@ export function Footer() {
             <Logo />
             <p className="text-sm leading-relaxed text-fg-muted">
               A technology partner for businesses building digital products, automating operations,
-              and growing online. Based in Ethiopia, working worldwide.
+              and growing online. Serving Ethiopia, Africa, and international markets.
             </p>
             {socialLinks.length > 0 ? (
               <ul className="flex gap-2.5">

@@ -35,7 +35,7 @@ export function Logo({ className, href = "/" }: { className?: string; href?: str
   return (
     <Link
       href={href}
-      aria-label={`${siteConfig.name} home`}
+      title={`${siteConfig.name} home`}
       className={cn("inline-flex items-center gap-3 text-fg", className)}
     >
       <span className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] border border-line bg-surface">

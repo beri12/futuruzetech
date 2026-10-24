@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { Container } from "@/components/ui/container";
 import { Breadcrumbs, type Crumb } from "@/components/ui/breadcrumbs";
-import { Reveal } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 type PageHeaderProps = {
@@ -35,7 +34,8 @@ export function PageHeader({
         )}
       >
         {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
-        <Reveal trigger="mount" className="flex max-w-[760px] flex-col gap-5">
+        {/* CSS entrance (hero-enter) so the heading paints before hydration. */}
+        <div className="hero-enter flex max-w-[760px] flex-col gap-5">
           {eyebrow ? <p className="eyebrow text-brand">{eyebrow}</p> : null}
           <h1
             className={cn(
@@ -51,7 +51,7 @@ export function PageHeader({
             </p>
           ) : null}
           {children}
-        </Reveal>
+        </div>
       </Container>
     </section>
   );

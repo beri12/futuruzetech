@@ -1,39 +1,14 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-import { Children, type ReactNode } from "react";
-import { easeOutExpo } from "@/components/motion/reveal";
+import type { ReactNode } from "react";
 
 /**
- * Staggers the hero's text children in on mount. Short delays only: the
- * whole sequence completes in well under a second.
+ * Wraps the hero's text children and staggers them in with a CSS keyframe
+ * animation (see `.hero-enter` in globals.css).
+ *
+ * CSS rather than Framer Motion on purpose: the animation starts at first
+ * paint instead of waiting for JavaScript to hydrate, which keeps the
+ * Largest Contentful Paint early on slow connections. Reduced-motion users
+ * see the content immediately with no animation.
  */
 export function HeroCopy({ children }: { children: ReactNode }) {
-  const reduce = useReducedMotion();
-  const items = Children.toArray(children);
-
-  if (reduce) {
-    return <div className="flex max-w-[640px] flex-1 basis-[480px] flex-col gap-7">{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className="flex max-w-[640px] flex-1 basis-[480px] flex-col gap-7"
-      initial="hidden"
-      animate="visible"
-      variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } } }}
-    >
-      {items.map((child, index) => (
-        <motion.div
-          key={index}
-          variants={{
-            hidden: { opacity: 0, y: 18 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: easeOutExpo } },
-          }}
-        >
-          {child}
-        </motion.div>
-      ))}
-    </motion.div>
-  );
+  return <div className="hero-enter flex max-w-[640px] flex-1 basis-[480px] flex-col gap-7">{children}</div>;
 }

@@ -27,7 +27,7 @@ export const siteConfig = {
   contact: {
     email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? null,
     phone: process.env.NEXT_PUBLIC_CONTACT_PHONE ?? null,
-    location: process.env.NEXT_PUBLIC_CONTACT_LOCATION ?? "Addis Ababa, Ethiopia",
+    location: process.env.NEXT_PUBLIC_CONTACT_LOCATION ?? null,
   },
   /** Social profiles, only shown when configured. */
   social: {

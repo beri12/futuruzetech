@@ -5,7 +5,6 @@ import { Clock } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Container } from "@/components/ui/container";
 import { Label, Chip } from "@/components/ui/chip";
-import { Reveal } from "@/components/motion/reveal";
 import { JsonLd } from "@/components/seo/json-ld";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { getPost, getRelatedPosts, postSlugs } from "@/data/blog";
@@ -99,7 +98,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
 
       <article className="bg-ink">
         <Container className="section-y flex flex-wrap gap-14">
-          <Reveal className="prose-ft min-w-0 flex-[2] basis-[560px] max-w-[720px]">
+          <div className="prose-ft min-w-0 max-w-[720px] flex-[2] basis-[560px]">
             {post.body.map((block, index) => (
               <Block key={index} block={block} />
             ))}
@@ -109,7 +108,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
                 <Chip key={tag}>{tag}</Chip>
               ))}
             </div>
-          </Reveal>
+          </div>
 
           <aside className="flex flex-1 basis-[280px] flex-col gap-6">
             {related.length > 0 ? (

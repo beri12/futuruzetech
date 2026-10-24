@@ -32,8 +32,11 @@ export default function WorkPage() {
         breadcrumbs={[{ label: "Our Work" }]}
         size="large"
       />
-      <section aria-label="Projects" className="bg-ink">
+      <section aria-labelledby="projects-title" className="bg-ink">
         <Container className="section-y">
+          <h2 id="projects-title" className="sr-only">
+            Projects
+          </h2>
           <Stagger as="ul" className="grid grid-cols-[repeat(auto-fit,minmax(min(360px,100%),1fr))] gap-5">
             {featured.map((project) => (
               <StaggerItem as="li" key={project.slug} className="col-span-full">

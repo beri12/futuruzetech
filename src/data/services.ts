@@ -7,6 +7,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import type { Service, ServiceSlug } from "@/types";
+import { serviceSlugList } from "@/data/service-slugs";
 
 export const services: Service[] = [
   {
@@ -450,3 +451,11 @@ export function getService(slug: string): Service | undefined {
 }
 
 export const serviceSlugs: ServiceSlug[] = services.map((service) => service.slug);
+
+// Keep the dependency-free slug list and the service data in sync.
+const declared = new Set<string>(serviceSlugList);
+for (const service of services) {
+  if (!declared.has(service.slug)) {
+    throw new Error(`Service slug "${service.slug}" is missing from service-slugs.ts`);
+  }
+}
