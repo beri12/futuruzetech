@@ -19,7 +19,7 @@ export default function ServicesPage() {
       <PageHeader
         eyebrow="Services"
         title="Everything you need to build, launch, and grow."
-        description="Six connected services, one team. Most projects combine two or more of them, from the first design to the marketing that brings people to it."
+        description="Eight connected disciplines, one accountable team. Most products combine several of them, from the first workshop to the campaign that brings users in."
         breadcrumbs={[{ label: "Services" }]}
         size="large"
       />

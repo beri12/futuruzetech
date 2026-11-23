@@ -11,10 +11,10 @@ export function Chip({ children, tone = "outline", className }: ChipProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-1.5 text-xs",
+        "inline-flex items-center rounded-full px-3 py-1.5 text-xs",
         tone === "outline" && "border border-line text-fg-soft",
-        tone === "solid" && "rounded-sm border border-line bg-surface px-2.5 text-[13px] text-fg",
-        tone === "brand" && "bg-brand font-semibold uppercase tracking-[0.14em] text-forest text-[11px]",
+        tone === "solid" && "border border-line bg-white/[0.03] text-[13px] text-fg",
+        tone === "brand" && "bg-brand text-[11px] font-semibold uppercase tracking-[0.14em] text-ink",
         tone === "light" && "border border-light-line bg-light-card text-light-muted",
         className,
       )}
@@ -28,10 +28,11 @@ export function Label({ children, className }: { children: ReactNode; className?
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border border-line px-2.5 py-1.5 text-[11px] uppercase tracking-[0.14em] text-fg-muted",
+        "inline-flex items-center gap-2 font-display text-[11px] font-medium uppercase tracking-[0.2em] text-fg-muted",
         className,
       )}
     >
+      <span aria-hidden="true" className="h-1 w-1 rounded-full bg-brand" />
       {children}
     </span>
   );

@@ -51,6 +51,15 @@ export type Project = {
   /** Path under /public, or null when no authorized screenshot exists yet. */
   image: string | null;
   imageAlt: string;
+  /**
+   * How the image fills its frame. "cover" for website screenshots,
+   * "contain" for logos and marks that must not be cropped.
+   */
+  imageFit?: "cover" | "contain";
+  /** Background behind a contained image (logos with their own backdrop). */
+  imageBackground?: string;
+  /** Accent colour taken from the project's own brand, used sparingly. */
+  accent?: string;
   url?: string;
   featured?: boolean;
   /** Set to true when a fact still has to be verified before publishing. */

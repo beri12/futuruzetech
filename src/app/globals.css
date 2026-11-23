@@ -6,70 +6,79 @@
   custom properties and are exposed to Tailwind through @theme, so utilities
   such as `bg-ink`, `text-fg-muted`, `border-line`, `font-display` and
   `duration-base` all resolve to the same values.
+
+  Palette: deep black / charcoal surfaces, one futuristic green used with
+  restraint, thin translucent borders.
 */
 @theme {
   /* Brand */
-  --color-brand: #18c779;
-  --color-brand-bright: #35e58c;
-  --color-brand-deep: #0f8f57;
+  --color-brand: #00e58b;
+  --color-brand-bright: #4df3b0;
+  --color-brand-deep: #00b96b;
 
   /* Dark surfaces */
-  --color-forest: #07130f;
-  --color-ink: #0a100d;
-  --color-surface: #111b15;
-  --color-surface-2: #0e1812;
-  --color-line: #24362b;
-  --color-line-soft: #1a2a20;
+  --color-ink: #080b09; /* primary background */
+  --color-forest: #0b100d; /* alternate section background */
+  --color-surface: #101713; /* secondary background, raised panels */
+  --color-surface-2: #0d1310; /* cards */
+  --color-line: rgba(255, 255, 255, 0.1);
+  --color-line-soft: rgba(255, 255, 255, 0.06);
+  --color-line-strong: rgba(255, 255, 255, 0.18);
 
   /* Text on dark */
-  --color-fg: #f3f7f4;
-  --color-fg-soft: #c9d6cd;
-  --color-fg-muted: #a3b5a9;
-  --color-fg-dim: #7f9387;
+  --color-fg: #f5f7f5;
+  --color-fg-soft: #c9d2cc;
+  --color-fg-muted: #9ca8a1;
+  --color-fg-dim: #7d8a82;
 
-  /* Light sections */
-  --color-light: #f5f8f5;
+  /* Light accents (kept for rare light-on-dark elements) */
+  --color-light: #f5f7f5;
   --color-light-card: #ffffff;
-  --color-light-ink: #132019;
-  --color-light-muted: #4b5e52;
-  --color-light-line: #d5ded8;
-  --color-light-tint: #e9f7f0;
+  --color-light-ink: #0b100d;
+  --color-light-muted: #4b5a51;
+  --color-light-line: #d7dfd9;
+  --color-light-tint: #e6faf1;
 
   /* Feedback */
   --color-success: #22c55e;
-  --color-error: #ef4444;
+  --color-error: #f87171;
   --color-error-soft: #fca5a5;
 
   /* Typography */
   --font-display: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), "Instrument Serif", ui-serif, Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
-  --radius-2xl: 20px;
+  /* Radii: kept small on purpose, the layout relies on lines, not bubbles */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
 
   /* Shadows */
-  --shadow-panel: 0 30px 80px rgba(0, 0, 0, 0.55);
-  --shadow-float: 0 24px 60px rgba(0, 0, 0, 0.5);
-  --shadow-chip: 0 12px 30px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 0 4px rgba(24, 199, 121, 0.18);
+  --shadow-panel: 0 40px 100px rgba(0, 0, 0, 0.6);
+  --shadow-float: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-chip: 0 12px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 0 4px rgba(0, 229, 139, 0.16);
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --duration-fast: 150ms;
-  --duration-base: 220ms;
-  --duration-slow: 600ms;
+  --duration-base: 260ms;
+  --duration-slow: 700ms;
+
+  --animate-marquee: ft-marquee var(--marquee-duration, 40s) linear infinite;
 }
 
 :root {
   color-scheme: dark;
-  --container-max: 1280px;
-  --gutter: clamp(16px, 4vw, 40px);
-  --section-y: clamp(72px, 8vw, 120px);
+  --container-max: 1360px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --section-y: clamp(88px, 11vw, 168px);
+  --header-h: 76px;
 }
 
 html {
@@ -86,6 +95,7 @@ body {
   background: var(--color-ink);
   color: var(--color-fg);
   font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
@@ -96,8 +106,8 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
-  text-wrap: pretty;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 p {
@@ -105,13 +115,13 @@ p {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brand-bright);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
 }
 
 ::selection {
   background: var(--color-brand);
-  color: var(--color-forest);
+  color: var(--color-ink);
 }
 
 /* Lenis */
@@ -129,7 +139,9 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* Layout helpers */
+/* ------------------------------------------------------------------ */
+/* Layout helpers                                                      */
+/* ------------------------------------------------------------------ */
 @utility container-x {
   width: 100%;
   max-width: var(--container-max);
@@ -141,19 +153,92 @@ html.lenis body {
   padding-block: var(--section-y);
 }
 
-/* Subtle technology grid used in the hero and contact sections */
+/* ------------------------------------------------------------------ */
+/* Typography scale                                                    */
+/* ------------------------------------------------------------------ */
+@utility text-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(50px, min(8.6vw, 15.5vh), 160px);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  font-weight: 600;
+}
+@utility text-display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6.4vw, 104px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+}
+@utility text-display-md {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.6vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+@utility text-display-sm {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.8vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+@utility text-lead {
+  font-size: clamp(17px, 1.35vw, 21px);
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+@utility text-statement {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.9vw, 60px);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+
+/* Serif italic accent inside display headings */
+@utility accent-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+@utility eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@utility text-gradient-brand {
+  background-image: linear-gradient(100deg, #f5f7f5 0%, #00e58b 45%, #4df3b0 60%, #f5f7f5 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* Surfaces                                                            */
+/* ------------------------------------------------------------------ */
+
+/* Fine technical grid, faded towards the edges */
 @utility bg-grid {
-  background-image: linear-gradient(rgba(24, 199, 121, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(24, 199, 121, 0.07) 1px, transparent 1px);
-  background-size: 72px 72px;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 88px 88px;
   background-position: center top;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 80%);
 }
 
 @utility bg-glow {
   background: radial-gradient(
-    720px 420px at 72% 34%,
-    rgba(24, 199, 121, 0.2),
-    rgba(24, 199, 121, 0) 68%
+    640px 420px at 75% 30%,
+    rgba(0, 229, 139, 0.14),
+    rgba(0, 229, 139, 0) 70%
   );
 }
 
@@ -163,18 +248,93 @@ html.lenis body {
   right: 0;
   top: 0;
   height: 1px;
-  background: linear-gradient(90deg, rgba(24, 199, 121, 0), #18c779 50%, rgba(24, 199, 121, 0));
-  opacity: 0.7;
+  background: linear-gradient(90deg, rgba(0, 229, 139, 0), #00e58b 50%, rgba(0, 229, 139, 0));
+  opacity: 0.5;
 }
 
-@utility eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  font-weight: 600;
+/* Film grain, very subtle, adds depth to flat black */
+@utility grain {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>");
+  opacity: 0.035;
+  mix-blend-mode: overlay;
 }
 
-/* Hero entrance: CSS so it runs before hydration */
+/*
+  Cursor spotlight: an element sets --mx / --my (in px) on pointer move,
+  and this paints a soft green light at that spot plus a brighter border.
+*/
+@utility spotlight {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, -20%),
+      rgba(0, 229, 139, 0.1),
+      transparent 45%
+    );
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-out-expo);
+    pointer-events: none;
+    z-index: -1;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      260px circle at var(--mx, 50%) var(--my, -20%),
+      rgba(0, 229, 139, 0.7),
+      transparent 60%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-out-expo);
+    pointer-events: none;
+  }
+  &:hover::before,
+  &:hover::after,
+  &:focus-within::before,
+  &:focus-within::after {
+    opacity: 1;
+  }
+}
+
+/* Animated underline for text links */
+@utility link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  transition: background-size var(--duration-slow) var(--ease-out-expo);
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+    background-position: 0% 100%;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                           */
+/* ------------------------------------------------------------------ */
+@keyframes ft-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @keyframes ft-rise {
   from {
     opacity: 0;
@@ -193,11 +353,48 @@ html.lenis body {
     transform: none;
   }
 }
-.hero-enter > * {
-  animation: ft-rise 0.7s var(--ease-out-expo) both;
+@keyframes ft-line-up {
+  from {
+    transform: translate3d(0, 105%, 0) rotate(2deg);
+  }
+  to {
+    transform: none;
+  }
 }
-/* The main heading only moves (never fades), so it counts as painted
-   immediately and the Largest Contentful Paint is not delayed. */
+@keyframes ft-gradient-pan {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0% 0;
+  }
+}
+@keyframes ft-scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(200%);
+  }
+}
+@keyframes ft-page-in {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/*
+  Entrance used on page headers: CSS so it runs before hydration and the
+  Largest Contentful Paint is not delayed by JavaScript.
+*/
+.hero-enter > * {
+  animation: ft-rise 0.9s var(--ease-out-expo) both;
+}
+/* The main heading only moves (never fades), so it counts as painted. */
 .hero-enter > h1 {
   animation-name: ft-rise-solid;
 }
@@ -213,64 +410,195 @@ html.lenis body {
 .hero-enter > :nth-child(5) {
   animation-delay: 0.32s;
 }
+
+/* Masked line-by-line headline reveal (hero). Each line sets --i. */
+.line-mask {
+  display: block;
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
+  padding-bottom: 0.04em;
+}
+.line-mask > span {
+  display: inline-block;
+  animation: ft-line-up 1.15s var(--ease-out-expo) both;
+  animation-delay: calc(0.12s + var(--i, 0) * 0.11s);
+  transform-origin: 0 100%;
+}
+
+.fade-in-late {
+  animation: ft-rise 1s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0.5s);
+}
+
+.gradient-pan {
+  animation: ft-gradient-pan 6s linear infinite alternate;
+}
+
+/*
+  Route change entrance (app/template.tsx). Transform only: no paint delay.
+  Fill mode is `backwards`, never `forwards`/`both`: a transform that stays
+  applied after the animation would make this wrapper the containing block
+  for position: fixed descendants and break ScrollTrigger pinning.
+*/
+.page-enter {
+  animation: ft-page-in 0.7s var(--ease-out-expo) backwards;
+}
+
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent, var(--color-brand));
+  animation: ft-scroll-cue 2.2s var(--ease-in-out-quart) infinite;
+}
+
+/* Marquee: pauses on hover, stops entirely for reduced motion */
+.marquee-track {
+  animation: var(--animate-marquee);
+}
+.marquee-track[data-reverse="true"] {
+  animation-direction: reverse;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-enter > * {
-    animation: none;
+  .hero-enter > *,
+  .line-mask > span,
+  .fade-in-late,
+  .gradient-pan,
+  .page-enter,
+  .scroll-cue::after,
+  .marquee-track {
+    animation: none !important;
   }
 }
 
-/* Form fields */
+/* Custom cursor follower (desktop, fine pointer only; see cursor.tsx) */
+.ft-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  pointer-events: none;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 229, 139, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition:
+    width 0.35s var(--ease-out-expo),
+    height 0.35s var(--ease-out-expo),
+    margin 0.35s var(--ease-out-expo),
+    background-color 0.35s var(--ease-out-expo),
+    border-color 0.35s var(--ease-out-expo),
+    opacity 0.3s ease;
+}
+.ft-cursor[data-visible="true"] {
+  opacity: 1;
+}
+.ft-cursor[data-state="hover"] {
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  background: rgba(0, 229, 139, 0.08);
+  border-color: rgba(0, 229, 139, 0.9);
+}
+.ft-cursor[data-state="label"] {
+  width: 92px;
+  height: 92px;
+  margin: -46px 0 0 -46px;
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.ft-cursor-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.ft-cursor[data-state="label"] .ft-cursor-label {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* Form fields                                                         */
+/* ------------------------------------------------------------------ */
 @utility field {
   width: 100%;
-  min-height: 48px;
+  min-height: 52px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-line);
-  background: var(--color-ink);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--color-fg);
-  padding: 12px 16px;
+  padding: 13px 16px;
   font-size: 15px;
-  transition: border-color var(--duration-base) ease;
+  transition:
+    border-color var(--duration-base) ease,
+    background-color var(--duration-base) ease;
 }
 .field::placeholder {
   color: var(--color-fg-dim);
 }
+.field:hover {
+  border-color: var(--color-line-strong);
+}
 .field:focus {
   border-color: var(--color-brand);
-  outline: 2px solid var(--color-brand);
+  background: rgba(0, 229, 139, 0.03);
+  outline: 2px solid rgba(0, 229, 139, 0.35);
   outline-offset: 1px;
 }
 .field[aria-invalid="true"] {
   border-color: var(--color-error);
 }
+select.field option {
+  background: var(--color-surface);
+}
 
-/* Prose for legal and blog pages */
+/* ------------------------------------------------------------------ */
+/* Prose for legal and blog pages                                      */
+/* ------------------------------------------------------------------ */
 .prose-ft {
   color: var(--color-fg-muted);
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 17px;
+  line-height: 1.75;
 }
 .prose-ft h2 {
   color: var(--color-fg);
-  font-size: 28px;
-  margin-top: 2.5rem;
+  font-size: clamp(26px, 2.4vw, 34px);
+  line-height: 1.15;
+  margin-top: 3rem;
   margin-bottom: 1rem;
 }
 .prose-ft h3 {
   color: var(--color-fg);
-  font-size: 20px;
+  font-size: 21px;
   margin-top: 2rem;
   margin-bottom: 0.75rem;
 }
 .prose-ft p {
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.15rem;
 }
 .prose-ft ul {
   list-style: disc;
   padding-left: 1.4rem;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.15rem;
 }
 .prose-ft li {
   margin-bottom: 0.4rem;
+}
+.prose-ft li::marker {
+  color: var(--color-brand);
 }
 .prose-ft a {
   color: var(--color-brand);

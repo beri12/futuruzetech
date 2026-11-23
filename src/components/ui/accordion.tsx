@@ -2,7 +2,6 @@
 
 import { useId, useState } from "react";
 import { Plus } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { Faq } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -16,13 +15,13 @@ type AccordionProps = {
 
 /**
  * Accessible accordion: each trigger is a real button with aria-expanded and
- * aria-controls; the panel is a region labelled by its trigger. Only one
- * item is open at a time, which keeps long FAQ lists scannable.
+ * aria-controls; the panel is a region labelled by its trigger. The height
+ * animates with a CSS grid-rows transition (no JavaScript measuring), and
+ * closed panels are `hidden` from assistive technology via `inert`.
  */
 export function Accordion({ items, defaultOpen = 0, tone = "dark", className }: AccordionProps) {
   const [open, setOpen] = useState<number | null>(defaultOpen);
   const baseId = useId();
-  const reduce = useReducedMotion();
   const light = tone === "light";
 
   return (
@@ -41,40 +40,38 @@ export function Accordion({ items, defaultOpen = 0, tone = "dark", className }: 
                 aria-controls={panelId}
                 onClick={() => setOpen(isOpen ? null : index)}
                 className={cn(
-                  "flex min-h-[44px] w-full items-center justify-between gap-4 py-5 text-left font-display text-[17px] font-semibold",
-                  light ? "text-light-ink" : "text-fg",
+                  "group flex min-h-[44px] w-full items-center justify-between gap-6 py-6 text-left font-display text-[clamp(17px,1.4vw,20px)] font-medium tracking-[-0.01em] transition-colors duration-base",
+                  light ? "text-light-ink" : isOpen ? "text-fg" : "text-fg-soft hover:text-fg",
                 )}
               >
                 <span>{item.question}</span>
-                <Plus
+                <span
                   aria-hidden="true"
-                  size={18}
-                  strokeWidth={2.4}
                   className={cn(
-                    "shrink-0 text-brand transition-transform duration-base motion-reduce:transition-none",
-                    isOpen && "rotate-45",
+                    "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-[transform,background-color,border-color,color] duration-500 ease-[var(--ease-out-expo)] motion-reduce:transition-none",
+                    isOpen ? "rotate-45 border-brand bg-brand text-ink" : "border-line text-brand group-hover:border-brand",
                   )}
-                />
+                >
+                  <Plus size={16} strokeWidth={2.2} />
+                </span>
               </button>
             </h3>
-            <AnimatePresence initial={false}>
-              {isOpen ? (
-                <motion.div
-                  id={panelId}
-                  role="region"
-                  aria-labelledby={triggerId}
-                  initial={reduce ? false : { height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={reduce ? undefined : { height: 0, opacity: 0 }}
-                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                  className="overflow-hidden"
-                >
-                  <p className={cn("max-w-[640px] pb-5 text-[15px] leading-relaxed", light ? "text-light-muted" : "text-fg-muted")}>
-                    {item.answer}
-                  </p>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+            <div
+              id={panelId}
+              role="region"
+              aria-labelledby={triggerId}
+              inert={!isOpen}
+              className={cn(
+                "grid transition-[grid-template-rows,opacity] duration-500 ease-[var(--ease-out-expo)] motion-reduce:transition-none",
+                isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+              )}
+            >
+              <div className="overflow-hidden">
+                <p className={cn("max-w-[680px] pb-6 text-[16px] leading-relaxed", light ? "text-light-muted" : "text-fg-muted")}>
+                  {item.answer}
+                </p>
+              </div>
+            </div>
           </div>
         );
       })}

@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { BackToTop } from "@/components/layout/back-to-top";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import { MotionProvider } from "@/components/motion/motion-provider";
+import { Cursor } from "@/components/motion/cursor";
+import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/config/site";
@@ -12,9 +12,13 @@ import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 /*
- * Fonts are self-hosted variable WOFF2 files (SIL Open Font License, see
+ * Fonts are self-hosted WOFF2 files (SIL Open Font License, see
  * src/fonts/LICENSE-*.txt) loaded through next/font/local. Self-hosting
  * keeps builds reproducible offline and avoids a third-party request.
+ *
+ * - Space Grotesk: headlines and display type
+ * - Inter: body copy and UI
+ * - Instrument Serif (italic): editorial accent words inside headlines
  */
 const spaceGrotesk = localFont({
   src: "../fonts/space-grotesk-latin-wght-normal.woff2",
@@ -32,20 +36,30 @@ const inter = localFont({
   fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
 });
 
+const instrumentSerif = localFont({
+  src: "../fonts/instrument-serif-latin-400-italic.woff2",
+  variable: "--font-instrument-serif",
+  weight: "400",
+  style: "italic",
+  display: "swap",
+  fallback: ["ui-serif", "Georgia", "serif"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} | Software, Web, Mobile, AI and Digital Marketing`,
+    default: `${siteConfig.name} | Software, Mobile, AI and Digital Transformation`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
   keywords: [
     "software development Ethiopia",
-    "web development Addis Ababa",
+    "software company Addis Ababa",
     "mobile app development Africa",
     "AI development",
-    "digital marketing agency Ethiopia",
+    "ERP and enterprise systems",
+    "digital transformation",
     "custom software",
   ],
   openGraph: {
@@ -66,7 +80,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0A100D",
+  themeColor: "#080B09",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
@@ -74,28 +88,30 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${inter.variable} ${instrumentSerif.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand focus:px-4 focus:py-2 focus:text-forest"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-full focus:bg-brand focus:px-5 focus:py-2.5 focus:text-ink"
         >
           Skip to content
         </a>
-        <MotionProvider>
-          <SmoothScroll />
-          <div id="top" className="flex min-h-full flex-1 flex-col">
-            <AnnouncementBar />
-            <Header />
-            <main id="main" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-          <BackToTop />
-        </MotionProvider>
+        <SmoothScroll />
+        <ScrollProgress />
+        <div id="top" className="flex min-h-full flex-1 flex-col">
+          <Header />
+          <main id="main" tabIndex={-1} className="flex-1 outline-none">
+            {children}
+          </main>
+          <Footer />
+        </div>
+        <BackToTop />
+        <Cursor />
       </body>
     </html>
   );

@@ -12,9 +12,9 @@ const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
 export const siteConfig = {
   name: "Futurize Technology",
   shortName: "Futurize",
-  tagline: "Your Next Big Idea. Built for What's Next.",
+  tagline: "Engineering Tomorrow. Building What Matters.",
   description:
-    "Futurize Technology designs and develops websites, custom software, mobile apps, AI-powered solutions and digital marketing for businesses in Ethiopia, Africa and international markets.",
+    "Futurize Technology is a technology company delivering software engineering, mobile applications, artificial intelligence, enterprise systems and digital transformation for businesses in Ethiopia, Africa and international markets.",
   /** Canonical production URL. Falls back to localhost during local builds. */
   url: rawSiteUrl ?? "http://localhost:3000",
   locale: "en",
@@ -35,11 +35,6 @@ export const siteConfig = {
     x: process.env.NEXT_PUBLIC_SOCIAL_X ?? null,
     github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB ?? null,
     instagram: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM ?? null,
-  },
-  announcement: {
-    message: "Building something ambitious? Let's make it happen.",
-    cta: "Talk to us",
-    href: "/contact",
   },
 } as const;
 

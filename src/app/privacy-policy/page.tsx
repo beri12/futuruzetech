@@ -82,9 +82,8 @@ export default function PrivacyPolicyPage() {
 
             <h2>Cookies</h2>
             <p>
-              This website uses only the storage necessary for it to work, such as remembering that
-              you dismissed the announcement bar for the current session. [UPDATE IF ANALYTICS OR
-              ADVERTISING COOKIES ARE ADDED.]
+              This website does not set cookies or use browser storage for tracking. [UPDATE IF
+              ANALYTICS OR ADVERTISING COOKIES ARE ADDED.]
             </p>
 
             <h2>Changes to this policy</h2>

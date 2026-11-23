@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { SplitText } from "@/components/motion/split-text";
 import { Reveal } from "@/components/motion/reveal";
 
 type CtaBannerProps = {
@@ -9,37 +10,36 @@ type CtaBannerProps = {
   secondary?: { label: string; href: string };
 };
 
-/** Compact call-to-action band used at the end of inner pages. */
-export function CtaBanner({
-  title,
-  description,
-  primary = { label: "Start a Project", href: "/contact" },
-  secondary,
-}: CtaBannerProps) {
+/** Call-to-action band used at the end of inner pages. */
+export function CtaBanner({ title, description, primary = { label: "Start a Project", href: "/contact" }, secondary }: CtaBannerProps) {
   return (
-    <section aria-labelledby="cta-title" className="bg-ink">
-      <Container className="py-[clamp(56px,6vw,96px)]">
-        <Reveal className="bg-grid relative overflow-hidden rounded-2xl border border-line bg-forest p-[clamp(28px,4vw,56px)]">
-          <div className="line-sweep" aria-hidden="true" />
-          <div className="relative flex flex-wrap items-center justify-between gap-8">
-            <div className="flex max-w-[640px] flex-col gap-3">
-              <h2 id="cta-title" className="text-[clamp(28px,3vw,40px)] font-bold leading-[1.1]">
-                {title}
-              </h2>
-              <p className="text-[16px] leading-relaxed text-fg-muted">{description}</p>
+    <section aria-labelledby="cta-title" className="border-t border-line-soft bg-ink">
+      <Container className="py-[clamp(72px,9vw,140px)]">
+        <div className="relative overflow-hidden rounded-[28px] border border-line bg-surface-2 p-[clamp(28px,5vw,72px)]">
+          <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0" />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-[radial-gradient(closest-side,rgba(0,229,139,0.16),transparent)]"
+          />
+          <div className="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex max-w-[760px] flex-col gap-5">
+              <SplitText as="h2" id="cta-title" text={title} className="text-display-md text-fg" />
+              <Reveal>
+                <p className="text-lead text-fg-muted">{description}</p>
+              </Reveal>
             </div>
-            <div className="flex flex-wrap gap-3.5">
-              <Button href={primary.href} size="lg" icon="arrow">
+            <div className="flex flex-wrap gap-3">
+              <Button href={primary.href} size="lg" icon="arrow" magnetic>
                 {primary.label}
               </Button>
               {secondary ? (
-                <Button href={secondary.href} size="lg" variant="ghost">
+                <Button href={secondary.href} size="lg" variant="ghost" magnetic>
                   {secondary.label}
                 </Button>
               ) : null}
             </div>
           </div>
-        </Reveal>
+        </div>
       </Container>
     </section>
   );

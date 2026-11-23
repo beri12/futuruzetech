@@ -5,33 +5,36 @@ import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { ServiceCard } from "@/components/services/service-card";
 import { services } from "@/data/services";
 
-export function ServicesGrid({ showAllLink = true }: { showAllLink?: boolean }) {
+export function ServicesGrid({ showAllLink = true, index = "02" }: { showAllLink?: boolean; index?: string }) {
   return (
-    <section
-      id="services"
-      aria-labelledby="services-title"
-      className="border-y border-line-soft bg-forest"
-    >
-      <Container className="section-y flex flex-col gap-12">
-        <Reveal className="flex flex-wrap items-end justify-between gap-6">
+    <section id="services" aria-labelledby="services-title" className="relative scroll-mt-24 border-t border-line-soft bg-forest">
+      <div className="line-sweep" aria-hidden="true" />
+      <Container className="section-y flex flex-col gap-[clamp(48px,6vw,88px)]">
+        <div className="flex flex-wrap items-end justify-between gap-8">
           <SectionHeading
-            eyebrow="What we do"
+            index={index}
+            eyebrow="Services"
             id="services-title"
-            title="Everything you need to build, launch, and grow."
+            title="Capabilities engineered for what comes next."
+            accent={["next."]}
+            size="lg"
           />
-          {showAllLink ? (
-            <Button href="/services" variant="ghost" size="sm" icon="arrow">
-              All services
-            </Button>
-          ) : null}
-        </Reveal>
-        <Stagger
-          as="ul"
-          className="grid grid-cols-[repeat(auto-fit,minmax(min(340px,100%),1fr))] gap-5"
-        >
-          {services.map((service) => (
+          <Reveal className="flex max-w-[380px] flex-col items-start gap-6">
+            <p className="text-[16px] leading-relaxed text-fg-muted">
+              Eight connected disciplines, one accountable team. Most products combine several of them,
+              from the first workshop to the campaign that brings users in.
+            </p>
+            {showAllLink ? (
+              <Button href="/services" variant="ghost" size="sm" icon="arrow">
+                All services
+              </Button>
+            ) : null}
+          </Reveal>
+        </div>
+        <Stagger as="ul" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" stagger={0.07}>
+          {services.map((service, i) => (
             <StaggerItem as="li" key={service.slug} className="relative">
-              <ServiceCard service={service} />
+              <ServiceCard service={service} index={i} />
             </StaggerItem>
           ))}
         </Stagger>

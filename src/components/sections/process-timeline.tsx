@@ -1,47 +1,44 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 import type { ProcessStep } from "@/types";
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+import { gsap, media, useGSAP } from "@/lib/motion/gsap";
 
 /**
- * Step timeline. The top rule of each step fills with emerald as the list
- * scrolls into view (GSAP ScrollTrigger, scrubbed), which reads as progress
- * along the process. Without JavaScript or with reduced motion every step is
- * fully visible and the first rule is highlighted, so the content never
- * depends on the animation.
+ * Step timeline. A single green progress rule runs across the steps and
+ * fills as the list scrolls through the viewport (scrubbed), lighting each
+ * step's marker as it passes. Without JavaScript or with reduced motion all
+ * steps are fully visible and the rule is complete.
  */
 export function ProcessTimeline({ steps }: { steps: ProcessStep[] }) {
-  const scope = useRef<HTMLOListElement>(null);
+  const scope = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
+      const el = scope.current;
+      if (!el) return;
       const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const rules = gsap.utils.toArray<HTMLElement>("[data-step-rule]");
-        gsap.set(rules, { scaleX: 0, transformOrigin: "left center" });
-        gsap.to(rules, {
-          scaleX: 1,
-          ease: "none",
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: scope.current,
-            start: "top 80%",
-            end: "bottom 60%",
-            scrub: 0.6,
-          },
+      mm.add(media.motion, () => {
+        const markers = gsap.utils.toArray<HTMLElement>(el.querySelectorAll("[data-step-marker]"));
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: el, start: "top 75%", end: "bottom 55%", scrub: 0.6 },
+        });
+        tl.fromTo("[data-step-rule]", { scaleX: 0 }, { scaleX: 1, ease: "none", duration: markers.length }, 0);
+        markers.forEach((marker, index) => {
+          tl.fromTo(
+            marker,
+            { backgroundColor: "#080b09", borderColor: "rgba(255,255,255,0.18)" },
+            { backgroundColor: "#00e58b", borderColor: "#00e58b", duration: 0.2 },
+            index,
+          );
         });
         gsap.from("[data-step]", {
-          y: 24,
+          y: 40,
           opacity: 0,
-          duration: 0.7,
+          duration: 0.9,
           ease: "expo.out",
-          stagger: 0.1,
-          scrollTrigger: { trigger: scope.current, start: "top 85%", once: true },
+          stagger: 0.08,
+          scrollTrigger: { trigger: el, start: "top 85%", once: true },
         });
       });
       return () => mm.revert();
@@ -50,25 +47,24 @@ export function ProcessTimeline({ steps }: { steps: ProcessStep[] }) {
   );
 
   return (
-    <ol
-      ref={scope}
-      className="grid grid-cols-[repeat(auto-fit,minmax(min(220px,100%),1fr))] gap-4"
-    >
-      {steps.map((step) => (
-        <li key={step.number} data-step className="relative flex flex-col gap-3 pt-6">
-          <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-line" />
-          <span
-            aria-hidden="true"
-            data-step-rule
-            className="absolute inset-x-0 top-0 h-0.5 bg-brand"
-          />
-          <span className="font-display text-[13px] font-semibold tracking-[0.14em] text-brand">
-            {step.number}
-          </span>
-          <h3 className="text-xl font-semibold">{step.title}</h3>
-          <p className="text-sm leading-relaxed text-fg-muted">{step.description}</p>
-        </li>
-      ))}
-    </ol>
+    <div ref={scope} className="relative">
+      <div aria-hidden="true" className="absolute inset-x-0 top-[7px] hidden h-px bg-line lg:block">
+        <div data-step-rule="" className="h-px origin-left bg-brand" />
+      </div>
+      <ol className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:auto-cols-fr lg:grid-flow-col">
+        {steps.map((step) => (
+          <li key={step.number} data-step="" className="relative flex flex-col gap-4">
+            <span
+              aria-hidden="true"
+              data-step-marker=""
+              className="h-[15px] w-[15px] rounded-full border border-brand bg-brand"
+            />
+            <span className="font-display text-sm text-fg-dim">{step.number}</span>
+            <h3 className="font-display text-[clamp(22px,1.8vw,28px)] font-medium tracking-[-0.03em] text-fg">{step.title}</h3>
+            <p className="text-[15px] leading-relaxed text-fg-muted">{step.description}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }

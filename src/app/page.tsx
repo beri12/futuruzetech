@@ -15,13 +15,15 @@ import { faqs } from "@/data/faqs";
 import { siteConfig } from "@/config/site";
 import { buildMetadata } from "@/lib/seo";
 
+const homeTitle = `${siteConfig.name} | Software, Mobile, AI and Digital Transformation`;
+
 export const metadata: Metadata = {
   ...buildMetadata({
-    title: `${siteConfig.name} | Software, Web, Mobile, AI and Digital Marketing`,
+    title: homeTitle,
     description: siteConfig.description,
     path: "/",
   }),
-  title: { absolute: `${siteConfig.name} | Software, Web, Mobile, AI and Digital Marketing` },
+  title: { absolute: homeTitle },
 };
 
 export default function HomePage() {
@@ -38,7 +40,7 @@ export default function HomePage() {
       <SocialProof />
       <EngagementModels />
       <FaqSection items={faqs} />
-      <ContactSection />
+      <ContactSection index="07" />
     </>
   );
 }

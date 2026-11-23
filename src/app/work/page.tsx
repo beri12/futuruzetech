@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
 import { Container } from "@/components/ui/container";
-import { Stagger, StaggerItem } from "@/components/motion/reveal";
 import { ProjectCard } from "@/components/portfolio/project-card";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { projects } from "@/data/projects";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Our Work",
+  title: "Projects",
   description:
-    "Selected digital products, platforms and websites built by Futurize Technology, with clear labels for client work, internal products and concept work.",
+    "Selected digital products built by Futurize Technology: Kidora, Abuja Construction, Chaka Gebeya and Gobezsew, across education, construction, e-commerce and e-learning.",
   path: "/work",
 });
 
@@ -26,10 +25,14 @@ export default function WorkPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Our work"
-        title="Digital products built to make a difference."
-        description="A selection of what we have built. Each project is labelled honestly as client work, an internal product, or concept work."
-        breadcrumbs={[{ label: "Our Work" }]}
+        eyebrow="Projects"
+        title={
+          <>
+            Digital products built to make a <span className="accent-serif text-brand">difference.</span>
+          </>
+        }
+        description="A selection of what we have built across education, construction, commerce and learning. Each project is labelled honestly as client work or an internal product."
+        breadcrumbs={[{ label: "Projects" }]}
         size="large"
       />
       <section aria-labelledby="projects-title" className="bg-ink">
@@ -37,18 +40,18 @@ export default function WorkPage() {
           <h2 id="projects-title" className="sr-only">
             Projects
           </h2>
-          <Stagger as="ul" className="grid grid-cols-[repeat(auto-fit,minmax(min(360px,100%),1fr))] gap-5">
+          <ul className="grid gap-x-8 gap-y-[clamp(64px,8vw,120px)] md:grid-cols-2">
             {featured.map((project) => (
-              <StaggerItem as="li" key={project.slug} className="col-span-full">
-                <ProjectCard project={project} featured />
-              </StaggerItem>
+              <li key={project.slug} className="md:col-span-2">
+                <ProjectCard project={project} index={0} featured />
+              </li>
             ))}
-            {rest.map((project) => (
-              <StaggerItem as="li" key={project.slug}>
-                <ProjectCard project={project} />
-              </StaggerItem>
+            {rest.map((project, i) => (
+              <li key={project.slug} className={i % 2 === 1 ? "md:mt-[clamp(80px,10vw,160px)]" : undefined}>
+                <ProjectCard project={project} index={featured.length + i} />
+              </li>
             ))}
-          </Stagger>
+          </ul>
         </Container>
       </section>
       <CtaBanner

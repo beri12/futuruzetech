@@ -2,7 +2,7 @@
 
 Marketing website for Futurize Technology: software development, web development, mobile apps, AI solutions and digital marketing for businesses in Ethiopia, Africa and international markets.
 
-Built with Next.js 16 (App Router, Cache Components), React 19, TypeScript (strict), Tailwind CSS 4, Framer Motion and GSAP.
+Built with Next.js 16 (App Router, Cache Components), React 19, TypeScript (strict), Tailwind CSS 4, GSAP (ScrollTrigger, ScrollTo, ScrambleText) and Lenis.
 
 ## Contents
 
@@ -21,7 +21,7 @@ Built with Next.js 16 (App Router, Cache Components), React 19, TypeScript (stri
 src/
   app/                    App Router routes (Server Components by default)
     page.tsx              Homepage
-    services/[slug]/      Six service detail pages (statically generated)
+    services/[slug]/      Eight service detail pages (statically generated)
     work/[slug]/          Portfolio detail pages
     blog/[slug]/          Insights articles
     about, process, pricing, contact, privacy-policy, terms
@@ -30,17 +30,20 @@ src/
     sitemap.ts, robots.ts, icon.svg, not-found.tsx, error.tsx, loading.tsx
   proxy.ts                Returns a real 404 for unknown service/work/blog slugs
   components/
-    layout/               Announcement bar, header (dropdown + mobile menu), footer, page header
+    layout/               Header (dropdowns + full-screen mobile menu), footer, page header, back-to-top
     sections/             Homepage and shared page sections
     services/, portfolio/ Service and project cards
     forms/                Contact and newsletter forms (React Hook Form + Zod)
-    motion/               Reveal/Stagger primitives, MotionProvider, Lenis smooth scroll
-    ui/                   Button, Container, SectionHeading, Chip, Accordion, Breadcrumbs, Logo
+    motion/               GSAP components: Reveal/Stagger, SplitText, ScrollText, ScrambleText, Magnetic,
+                          TiltCard, Cursor, Parallax, ClipReveal, DrawSvg, Counter, Marquee, ScrollProgress, Lenis
+    ui/                   Button, Container, SectionHeading, typography, Chip, Accordion, Breadcrumbs, Logo, SocialLinks
     seo/                  JSON-LD helper
   config/                 site.ts (identity, contact, social), navigation.ts
   data/                   Typed content: services, projects, blog, faqs, process, stack, engagement
+  hooks/                  useMagnetic, useTilt (pointer-driven GSAP hooks)
   lib/                    utils, validation (Zod schemas), email (Resend), rate-limit, seo
-  fonts/                  Self-hosted Inter and Space Grotesk (SIL OFL)
+    motion/               gsap.ts (plugin registration + motion tokens), lenis-store.ts
+  fonts/                  Self-hosted Space Grotesk, Inter and Instrument Serif italic (SIL OFL)
   types/                  Shared TypeScript types
 tests/                    Vitest unit tests (validation, rate limiting, contact route)
 ```
@@ -51,7 +54,8 @@ Design decisions worth knowing:
 - **No invented facts.** Projects whose details are unconfirmed carry bracketed placeholders, are flagged `needsVerification: true`, and are excluded from the sitemap and marked `noindex` until updated. The testimonial section renders only when `src/data/testimonials.ts` has entries; otherwise a "What to expect" section is shown.
 - **Fonts are self-hosted** via `next/font/local` so builds are reproducible without network access.
 - **Cache Components** (Next 16 default) prerender every page as static HTML. Dynamic detail routes use `generateStaticParams`; `src/proxy.ts` rewrites unknown slugs so they return HTTP 404 rather than a streamed soft-404.
-- **Motion**: Framer Motion for entrance and interaction states, GSAP + ScrollTrigger for the hero timeline and the process timeline, Lenis for optional smooth scrolling (disabled for reduced-motion and touch devices). Every animation respects `prefers-reduced-motion`, and content is visible without JavaScript. Three.js was intentionally left out to keep the site light.
+- **Motion**: GSAP is the single animation engine. `src/lib/motion/gsap.ts` registers the plugins once and holds the shared tokens (eases, durations, staggers, media queries); components import from there. Every effect is created inside `gsap.matchMedia()` so it only exists when `prefers-reduced-motion: no-preference` matches, and pointer effects (magnetic buttons, card tilt, cursor follower, hero light) additionally require a desktop-width, fine-pointer device. `useGSAP` handles cleanup. Content is always server-rendered visible: hero and page headings animate with CSS keyframes so they paint before hydration (good LCP), and scroll reveals only apply their hidden state after hydration. Lenis smooth scrolling is synced to ScrollTrigger and disabled for reduced motion and touch devices.
+- **Design system**: deep black surfaces (`#080B09` / `#101713`), one brand green (`#00E58B`, secondary `#00B96B`), translucent hairline borders, and a fluid type scale (`text-display-xl/lg/md/sm`, `text-lead`, `text-statement`) built with `clamp()`. Space Grotesk for headlines, Inter for body, Instrument Serif italic for accent words. `cn()` is configured so tailwind-merge understands the custom type-scale classes.
 - **Design tokens** are CSS custom properties in `src/app/globals.css`, exposed to Tailwind through `@theme` (for example `bg-ink`, `text-fg-muted`, `border-line`, `font-display`).
 
 ## Getting started
@@ -94,7 +98,7 @@ Submissions are not logged and are not stored in a database. If lead storage is 
 ## Content
 
 - **Services**: `src/data/services.ts` (slug list in `src/data/service-slugs.ts`).
-- **Projects**: `src/data/projects.ts`. Replace bracketed placeholders, add screenshots under `public/images/projects/` and set `image`, then set `needsVerification: false`.
+- **Projects**: `src/data/projects.ts`. Screenshots live in `public/images/projects/`. `imageFit: "contain"` (with `imageBackground`) shows a logo uncropped instead of a full-bleed screenshot. Set `needsVerification: true` on any entry whose details still need confirming; it is then noindexed and left out of the sitemap.
 - **Articles**: `src/data/blog.ts`, a typed block format (paragraph, heading, list). Migrate to MDX or a CMS later without touching the pages.
 - **FAQs, process, stack, engagement models**: the remaining files in `src/data`.
 - **Testimonials**: `src/data/testimonials.ts`, add only verified, approved quotes.
@@ -110,9 +114,9 @@ npm run build       # next build (fails on type or prerender errors)
 npm run check       # all of the above in sequence
 ```
 
-Lighthouse (local production build, mobile simulation, Lighthouse 12): accessibility 100, best practices 100 and SEO 100 on every page measured; performance 83 on the homepage (LCP 3.8 s simulated, CLS 0) and 94 to 99 on inner pages. The homepage carries the hero animation bundle (GSAP + Framer Motion); if a higher score is required, the next step is to lazy-load the hero visual below the fold or trim the animation libraries.
+Lighthouse has not been re-run since the GSAP redesign. The previous design measured accessibility, best practices and SEO at 100 and homepage performance at 83 (mobile simulation); re-measure after deploying. Framer Motion has been removed, so all motion now ships in one library (GSAP).
 
-Browser checks that need a running server (`npm run build && npm run start`) and were performed manually with Playwright: all routes return the expected status, no console errors, no horizontal overflow at 390 px and 1440 px, mobile menu opens/closes with Escape and traps focus, FAQ accordion toggles `aria-expanded`, form shows field errors and the not-configured state, announcement bar dismisses, hero content is visible with reduced motion, and the first Tab lands on "Skip to content".
+Browser checks performed with Playwright against a production build (`npm run build && npm run start`): all routes return the expected status (unknown slugs 404), no console errors on the homepage at 1440 px or on an iPhone 13 profile, no horizontal overflow at either width, the pinned horizontal project scroll works on desktop and falls back to a vertical stack on mobile and with reduced motion, no text is left hidden with reduced motion, the mobile menu opens and closes with Escape, the form API returns the honest not-configured state, and the first Tab lands on "Skip to content".
 
 ## Deployment
 

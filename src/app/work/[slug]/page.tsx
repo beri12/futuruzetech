@@ -5,7 +5,9 @@ import { Container } from "@/components/ui/container";
 import { Chip, Label } from "@/components/ui/chip";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
-import { ProjectPreview } from "@/components/portfolio/project-card";
+import { ProjectMedia } from "@/components/portfolio/project-media";
+import { ClipReveal } from "@/components/motion/clip-reveal";
+import { Parallax } from "@/components/motion/parallax";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { getProject, projectKindLabels, projectSlugs } from "@/data/projects";
 import { buildMetadata } from "@/lib/seo";
@@ -38,28 +40,35 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
         eyebrow={projectKindLabels[project.kind]}
         title={project.name}
         description={project.summary}
-        breadcrumbs={[{ label: "Our Work", href: "/work" }, { label: project.name }]}
+        breadcrumbs={[{ label: "Projects", href: "/work" }, { label: project.name }]}
       >
-        <div className="flex flex-wrap items-center gap-2 pt-1">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
           <Label>{project.category}</Label>
           {project.technologies.map((item) => (
             <Chip key={item}>{item}</Chip>
           ))}
+          {project.url ? (
+            <Button href={project.url} external variant="ghost" size="sm" icon="external">
+              Visit live site
+            </Button>
+          ) : null}
         </div>
       </PageHeader>
 
       <section aria-label="Project preview" className="bg-ink">
         <Container className="pt-[clamp(40px,5vw,72px)]">
-          <Reveal className="relative flex min-h-[320px] items-end justify-center overflow-hidden rounded-2xl border border-line bg-forest px-[clamp(16px,4vw,40px)] pt-[clamp(24px,4vw,40px)]">
-            <ProjectPreview project={project} />
-          </Reveal>
+          <ClipReveal direction="center" className="relative aspect-[16/10] overflow-hidden rounded-[24px] border border-line bg-surface lg:aspect-[16/8]">
+            <Parallax speed={10} className="absolute -inset-y-[6%] inset-x-0">
+              <ProjectMedia project={project} priority sizes="(max-width: 1360px) 100vw, 1280px" />
+            </Parallax>
+          </ClipReveal>
         </Container>
       </section>
 
       <section aria-labelledby="project-about-title" className="bg-ink">
         <Container className="section-y flex flex-wrap gap-14">
           <Reveal className="flex max-w-[680px] flex-[2] basis-[400px] flex-col gap-5">
-            <h2 id="project-about-title" className="text-[clamp(28px,3vw,40px)] font-bold leading-[1.1]">
+            <h2 id="project-about-title" className="text-display-sm text-fg">
               About the project
             </h2>
             {project.needsVerification ? (
@@ -76,7 +85,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
             ))}
           </Reveal>
           <Reveal delay={0.1} className="flex flex-1 basis-[260px] flex-col gap-6">
-            <dl className="flex flex-col gap-4 rounded-xl border border-line bg-surface-2 p-6 text-sm">
+            <dl className="flex flex-col gap-5 rounded-2xl border border-line bg-surface-2 p-7 text-sm">
               <div className="flex flex-col gap-1">
                 <dt className="text-xs uppercase tracking-[0.18em] text-fg-dim">Type</dt>
                 <dd className="text-fg">{projectKindLabels[project.kind]}</dd>

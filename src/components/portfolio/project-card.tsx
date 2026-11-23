@@ -1,146 +1,61 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/types";
 import { projectKindLabels } from "@/data/projects";
-import { Chip, Label } from "@/components/ui/chip";
+import { Label } from "@/components/ui/chip";
+import { ClipReveal } from "@/components/motion/clip-reveal";
+import { ProjectMedia } from "@/components/portfolio/project-media";
 import { cn } from "@/lib/utils";
 
 type ProjectCardProps = {
   project: Project;
-  /** Featured cards span the full row and show a larger preview. */
+  index?: number;
+  /** Featured cards span the full row with a wider image. */
   featured?: boolean;
 };
 
-export function ProjectCard({ project, featured = false }: ProjectCardProps) {
+/**
+ * Editorial project card used on the Projects page: large image revealed
+ * through a clip-path mask, then category, title and summary. Hovering zooms
+ * the image slowly and turns the arrow green; the custom cursor shows "View".
+ */
+export function ProjectCard({ project, index, featured = false }: ProjectCardProps) {
   const href = `/work/${project.slug}`;
   return (
-    <article
-      className={cn(
-        "group relative flex overflow-hidden rounded-2xl border border-line bg-surface-2 transition-[border-color,transform] duration-base hover:-translate-y-0.5 hover:border-brand motion-reduce:transition-none motion-reduce:hover:translate-y-0",
-        featured ? "col-span-full flex-wrap" : "flex-col gap-4 p-7",
-      )}
-    >
-      {featured ? (
-        <>
-          <div className="flex min-w-0 flex-1 basis-[320px] flex-col justify-center gap-[18px] p-9">
-            <KindAndCategory project={project} />
-            <h3 className="text-[clamp(26px,2.6vw,36px)] font-bold">
-              <Link href={href} className="after:absolute after:inset-0 focus-visible:outline-none">
-                {project.name}
-              </Link>
-            </h3>
-            <p className="text-base leading-relaxed text-fg-muted">{project.summary}</p>
-            <TechList items={project.technologies} />
-            <ViewLink label="View case study" />
+    <article className="group relative flex flex-col gap-6" data-cursor-label="View">
+      <ClipReveal
+        className={cn(
+          "relative overflow-hidden rounded-2xl border border-line bg-surface",
+          featured ? "aspect-[16/10] lg:aspect-[21/9]" : "aspect-[16/11]",
+        )}
+      >
+        <ProjectMedia
+          project={project}
+          sizes={featured ? "(max-width: 1024px) 100vw, 1280px" : "(max-width: 768px) 100vw, 640px"}
+        />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent" />
+      </ClipReveal>
+      <div className="flex flex-wrap items-start justify-between gap-6">
+        <div className="flex max-w-[640px] flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {index !== undefined ? <span className="font-display text-sm text-fg-dim">{String(index + 1).padStart(2, "0")}</span> : null}
+            <Label>{project.category}</Label>
+            <span className="text-xs uppercase tracking-[0.18em] text-fg-dim">{projectKindLabels[project.kind]}</span>
           </div>
-          <div className="relative flex min-h-[320px] min-w-0 flex-1 basis-[400px] items-end justify-center overflow-hidden border-l border-line-soft bg-forest px-10 pt-10">
-            <ProjectPreview project={project} />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="relative h-[140px] overflow-hidden rounded-[12px] border border-line-soft bg-surface">
-            <ProjectPreview project={project} compact />
-          </div>
-          <KindAndCategory project={project} />
-          <h3 className="text-[22px] font-semibold">
+          <h3 className={cn("font-display font-medium leading-none tracking-[-0.04em] text-fg", featured ? "text-display-md" : "text-[clamp(30px,3vw,44px)]")}>
             <Link href={href} className="after:absolute after:inset-0 focus-visible:outline-none">
               {project.name}
             </Link>
           </h3>
-          <p className="text-[15px] leading-relaxed text-fg-muted">{project.summary}</p>
-          <TechList items={project.technologies} />
-          <ViewLink label="View project" className="mt-auto" />
-        </>
-      )}
-    </article>
-  );
-}
-
-function KindAndCategory({ project }: { project: Project }) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Chip tone="brand">{projectKindLabels[project.kind]}</Chip>
-      <Label>{project.category}</Label>
-    </div>
-  );
-}
-
-function TechList({ items }: { items: string[] }) {
-  if (items.length === 0) return null;
-  return (
-    <ul className="flex flex-wrap gap-2">
-      {items.map((item) => (
-        <li key={item}>
-          <Chip>{item}</Chip>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function ViewLink({ label, className }: { label: string; className?: string }) {
-  return (
-    <span className={cn("inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand", className)}>
-      {label}
-      <ArrowRight
-        aria-hidden="true"
-        size={16}
-        strokeWidth={2.2}
-        className="transition-transform duration-base group-hover:translate-x-0.5 motion-reduce:transition-none"
-      />
-    </span>
-  );
-}
-
-/**
- * Renders the real screenshot when one exists; otherwise a clearly labelled
- * placeholder frame, never a fake or borrowed image.
- */
-export function ProjectPreview({ project, compact = false }: { project: Project; compact?: boolean }) {
-  if (project.image) {
-    return (
-      <Image
-        src={project.image}
-        alt={project.imageAlt}
-        fill
-        sizes={compact ? "(max-width: 768px) 100vw, 400px" : "(max-width: 768px) 100vw, 560px"}
-        className={cn("object-cover", compact ? "" : "object-top")}
-      />
-    );
-  }
-  if (compact) {
-    return (
-      <div
-        aria-hidden="true"
-        className="flex h-full w-full items-center justify-center text-xs text-fg-dim"
-      >
-        Add project image
-      </div>
-    );
-  }
-  return (
-    <div
-      aria-hidden="true"
-      className="flex h-[280px] w-full max-w-[520px] flex-col overflow-hidden rounded-t-[14px] border border-b-0 border-line bg-surface"
-    >
-      <div className="flex h-10 items-center gap-2 border-b border-line-soft px-3.5">
-        <span className="h-2 w-2 rounded-full bg-line" />
-        <span className="h-2 w-2 rounded-full bg-line" />
-        <span className="h-2 w-2 rounded-full bg-line" />
-        <span className="ml-2 text-[11px] text-fg-dim">Screenshot placeholder</span>
-      </div>
-      <div className="grid flex-1 grid-cols-[160px_1fr] gap-3.5 p-3.5">
-        <div className="rounded-[10px] border border-line-soft bg-surface-2" />
-        <div className="grid auto-rows-[70px] grid-cols-3 gap-2.5">
-          <div className="rounded-[10px] border border-line-soft bg-surface-2" />
-          <div className="rounded-[10px] bg-brand/90" />
-          <div className="rounded-[10px] border border-line-soft bg-surface-2" />
-          <div className="col-span-2 rounded-[10px] border border-line-soft bg-surface-2" />
-          <div className="rounded-[10px] border border-line-soft bg-surface-2" />
+          <p className="text-[16px] leading-relaxed text-fg-muted">{project.summary}</p>
         </div>
+        <span
+          aria-hidden="true"
+          className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-line text-fg transition-[background-color,border-color,color,transform] duration-500 ease-[var(--ease-out-expo)] group-hover:rotate-45 group-hover:border-brand group-hover:bg-brand group-hover:text-ink motion-reduce:transition-none"
+        >
+          <ArrowUpRight size={22} strokeWidth={1.6} />
+        </span>
       </div>
-    </div>
+    </article>
   );
 }

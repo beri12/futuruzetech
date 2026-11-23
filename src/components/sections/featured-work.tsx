@@ -1,43 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
-import { ProjectCard } from "@/components/portfolio/project-card";
+import { ProjectsShowcase } from "@/components/sections/projects-showcase";
 import { projects } from "@/data/projects";
 
 export function FeaturedWork() {
-  const featured = projects.filter((project) => project.featured);
-  const rest = projects.filter((project) => !project.featured).slice(0, 3);
-
+  const ordered = [...projects.filter((p) => p.featured), ...projects.filter((p) => !p.featured)];
   return (
-    <section id="work" aria-labelledby="work-title" className="bg-ink">
-      <Container className="section-y flex flex-col gap-12">
-        <Reveal className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading
-            eyebrow="Selected work"
-            id="work-title"
-            title="Digital products built to make a difference."
-          />
-          <Button href="/work" variant="ghost" size="sm" icon="arrow">
-            View all work
-          </Button>
-        </Reveal>
-        <Stagger
-          as="ul"
-          className="grid grid-cols-[repeat(auto-fit,minmax(min(360px,100%),1fr))] gap-5"
-        >
-          {featured.map((project) => (
-            <StaggerItem as="li" key={project.slug} className="col-span-full">
-              <ProjectCard project={project} featured />
-            </StaggerItem>
-          ))}
-          {rest.map((project) => (
-            <StaggerItem as="li" key={project.slug}>
-              <ProjectCard project={project} />
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Container>
+    <section id="work" aria-labelledby="work-title" className="relative scroll-mt-24 border-t border-line-soft bg-ink py-[clamp(88px,10vw,140px)] lg:py-0">
+      <ProjectsShowcase
+        projects={ordered}
+        intro={
+          <div className="flex flex-col gap-8">
+            <SectionHeading index="03" eyebrow="Projects" id="work-title" title="Selected work, built to make a difference." accent={["difference."]} />
+            <p className="max-w-[420px] text-[16px] leading-relaxed text-fg-muted">
+              Education, construction, commerce and learning: products we have designed and engineered
+              for real users.
+            </p>
+            <div>
+              <Button href="/work" variant="ghost" icon="arrow">
+                All projects
+              </Button>
+            </div>
+          </div>
+        }
+      />
     </section>
   );
 }

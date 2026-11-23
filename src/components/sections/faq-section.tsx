@@ -21,7 +21,7 @@ export function FaqSection({
   structuredData = true,
 }: FaqSectionProps) {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="border-y border-line-soft bg-forest">
+    <section id="faq" aria-labelledby="faq-title" className="scroll-mt-24 border-t border-line-soft bg-forest">
       {structuredData ? (
         <JsonLd
           data={{
@@ -35,17 +35,19 @@ export function FaqSection({
           }}
         />
       ) : null}
-      <Container className="section-y flex flex-wrap gap-14">
-        <Reveal className="flex max-w-[420px] flex-1 basis-[320px] flex-col gap-4">
+      <Container className="section-y grid gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+        <div className="flex flex-col gap-6 lg:sticky lg:top-[calc(var(--header-h)+48px)] lg:self-start">
           <SectionHeading eyebrow={eyebrow} id="faq-title" title={title} />
-          <p className="text-base leading-relaxed text-fg-muted">
-            Something else on your mind?{" "}
-            <Link href="/contact" className="font-semibold text-brand hover:text-brand-bright">
-              Ask us directly.
-            </Link>
-          </p>
-        </Reveal>
-        <Reveal delay={0.1} className="flex-[2] basis-[560px]">
+          <Reveal>
+            <p className="text-base leading-relaxed text-fg-muted">
+              Something else on your mind?{" "}
+              <Link href="/contact" className="link-underline font-medium text-brand">
+                Ask us directly.
+              </Link>
+            </p>
+          </Reveal>
+        </div>
+        <Reveal delay={0.1}>
           <Accordion items={items} />
         </Reveal>
       </Container>

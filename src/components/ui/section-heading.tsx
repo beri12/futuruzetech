@@ -1,8 +1,12 @@
 import type { ReactNode } from "react";
+import { SplitText } from "@/components/motion/split-text";
+import { Eyebrow } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 
 type SectionHeadingProps = {
   eyebrow?: string;
+  /** Optional section index shown before the eyebrow, e.g. "02". */
+  index?: string;
   title: ReactNode;
   description?: ReactNode;
   id?: string;
@@ -10,10 +14,16 @@ type SectionHeadingProps = {
   align?: "left" | "center";
   className?: string;
   as?: "h1" | "h2";
+  size?: "lg" | "md";
+  /** Words in the title set in the serif italic accent. */
+  accent?: string[];
+  /** Animate a string title with a word-by-word mask reveal (default true). */
+  animate?: boolean;
 };
 
 export function SectionHeading({
   eyebrow,
+  index,
   title,
   description,
   id,
@@ -21,35 +31,27 @@ export function SectionHeading({
   align = "left",
   className,
   as: Heading = "h2",
+  size = "md",
+  accent,
+  animate = true,
 }: SectionHeadingProps) {
   const light = tone === "light";
+  const titleClass = cn(
+    Heading === "h1" || size === "lg" ? "text-display-lg" : "text-display-md",
+    light ? "text-light-ink" : "text-fg",
+  );
   return (
-    <div
-      className={cn(
-        "flex max-w-[680px] flex-col gap-4",
-        align === "center" && "mx-auto items-center text-center",
-        className,
+    <div className={cn("flex max-w-[860px] flex-col gap-6", align === "center" && "mx-auto items-center text-center", className)}>
+      {eyebrow ? <Eyebrow index={index}>{eyebrow}</Eyebrow> : null}
+      {typeof title === "string" && animate ? (
+        <SplitText as={Heading} id={id} text={title} accent={accent} className={titleClass} />
+      ) : (
+        <Heading id={id} className={titleClass}>
+          {title}
+        </Heading>
       )}
-    >
-      {eyebrow ? (
-        <p className={cn("eyebrow", light ? "text-brand-deep" : "text-brand")}>{eyebrow}</p>
-      ) : null}
-      <Heading
-        id={id}
-        className={cn(
-          "font-display font-bold leading-[1.06]",
-          Heading === "h1"
-            ? "text-[clamp(40px,5.4vw,76px)] leading-[1.02]"
-            : "text-[clamp(32px,3.6vw,52px)]",
-          light ? "text-light-ink" : "text-fg",
-        )}
-      >
-        {title}
-      </Heading>
       {description ? (
-        <p className={cn("text-[17px] leading-relaxed", light ? "text-light-muted" : "text-fg-muted")}>
-          {description}
-        </p>
+        <p className={cn("text-lead max-w-[620px]", light ? "text-light-muted" : "text-fg-muted")}>{description}</p>
       ) : null}
     </div>
   );

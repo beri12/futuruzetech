@@ -2,7 +2,7 @@ import type { TechCategory } from "@/types";
 
 export const techStack: TechCategory[] = [
   { name: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Angular"] },
-  { name: "Backend", items: ["Node.js", "NestJS", "Express", "C#", ".NET"] },
+  { name: "Backend", items: ["Node.js", "NestJS", "Python", "Express", "C#", ".NET"] },
   { name: "Mobile", items: ["React Native", "Expo"] },
   { name: "Data", items: ["PostgreSQL", "MySQL", "Redis", "Prisma"] },
   {
@@ -14,53 +14,46 @@ export const techStack: TechCategory[] = [
 ];
 
 export const capabilities = [
-  "Digital Products",
-  "Web Platforms",
+  "Software Engineering",
   "Mobile Applications",
-  "AI Solutions",
-  "Digital Growth",
+  "Artificial Intelligence",
+  "ERP & Enterprise Systems",
+  "Digital Transformation",
+  "UI/UX & Product Design",
+  "Digital Marketing",
 ];
 
+/** The five commitments behind every engagement. */
 export const whyChoose = [
   {
-    title: "Business-first problem solving",
-    description: "Every decision ties back to a goal, a user, or a cost.",
-    icon: "target",
+    title: "Engineering excellence",
+    description:
+      "Typed code, peer review, automated checks and CI on every project, so quality is a habit rather than a final-week scramble.",
+    points: ["Code review", "Automated testing", "CI/CD"],
   },
   {
-    title: "Clear communication",
-    description: "Plain updates, honest timelines, no jargon walls.",
-    icon: "message",
-  },
-  {
-    title: "Modern engineering practices",
-    description: "Typed code, reviews, automated checks, and CI.",
-    icon: "code",
-  },
-  {
-    title: "Responsive design across devices",
-    description: "Designed for the phone first, then every larger screen.",
-    icon: "devices",
+    title: "Modern technology",
+    description:
+      "Current, well-supported frameworks and cloud services chosen for the problem at hand, not for novelty.",
+    points: ["Next.js and React", "NestJS and Python", "AI services"],
   },
   {
     title: "Scalable architecture",
-    description: "Built to grow with your users, data, and team.",
-    icon: "shield",
+    description:
+      "Systems designed to grow with your users, data and team, with clear boundaries that make change affordable later.",
+    points: ["Modular design", "API-first", "Observability"],
   },
   {
-    title: "Maintainable code",
-    description: "Readable, documented, and ready for whoever comes next.",
-    icon: "list",
+    title: "User-centered design",
+    description:
+      "Research, prototypes and testing with real people, designed for the phones and networks your users actually have.",
+    points: ["Research", "Prototyping", "Accessibility"],
   },
   {
-    title: "Transparent delivery process",
-    description: "Milestones you can see, with demos along the way.",
-    icon: "eye",
-  },
-  {
-    title: "Post-launch support",
-    description: "We stay available after go-live, as agreed.",
-    icon: "life-buoy",
+    title: "Long-term partnership",
+    description:
+      "Documentation, handover and support after launch. We measure our work by how well your product keeps running.",
+    points: ["Documentation", "Support plans", "Roadmapping"],
   },
 ] as const;
 

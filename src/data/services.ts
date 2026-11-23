@@ -1,15 +1,17 @@
 import {
   Brain,
   Code2,
+  Layers,
   LayoutTemplate,
   PenTool,
   Smartphone,
   TrendingUp,
+  Workflow,
 } from "lucide-react";
 import type { Service, ServiceSlug } from "@/types";
 import { serviceSlugList } from "@/data/service-slugs";
 
-export const services: Service[] = [
+const serviceList: Service[] = [
   {
     slug: "web-development",
     title: "Website Development",
@@ -301,6 +303,151 @@ export const services: Service[] = [
     },
   },
   {
+    slug: "erp-enterprise-systems",
+    title: "ERP and Enterprise Systems",
+    navLabel: "ERP Systems",
+    icon: Layers,
+    shortDescription:
+      "Connected systems for finance, inventory, HR, sales and operations, built around how your organization really works.",
+    intro:
+      "As organizations grow, spreadsheets and disconnected tools start to cost more than they save. We design, implement and integrate enterprise systems, from ERP and CRM to internal tools and reporting, so information flows once and every team works from the same source of truth.",
+    deliverables: [
+      "ERP implementation and customization",
+      "CRM and sales pipeline systems",
+      "Inventory and procurement modules",
+      "HR and payroll workflows",
+      "Role-based access and approvals",
+      "Reporting dashboards",
+      "Integrations with existing software",
+      "Data migration from legacy tools",
+    ],
+    highlights: ["ERP", "CRM", "Inventory", "Reporting"],
+    process: [
+      {
+        number: "01",
+        title: "Process mapping",
+        description:
+          "We document how work actually moves between teams today, including the workarounds, before choosing what to build or configure.",
+      },
+      {
+        number: "02",
+        title: "Solution design",
+        description:
+          "Modules, roles, approvals and integrations defined in writing, with a phased rollout plan that limits disruption.",
+      },
+      {
+        number: "03",
+        title: "Build and migrate",
+        description:
+          "Configuration and custom development in milestones, with data migrated and checked against the old records.",
+      },
+      {
+        number: "04",
+        title: "Training and support",
+        description:
+          "Hands-on training for each team, documentation, and support while the organization settles into the new system.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Do you build custom ERP systems or configure existing ones?",
+        answer:
+          "Both. Where an established platform fits, configuring it is faster and cheaper. Where your processes are specific, a custom system built on a modern stack can fit better. We recommend after process mapping, not before.",
+      },
+      {
+        question: "Can the new system connect to software we already use?",
+        answer:
+          "Usually, yes. We integrate through APIs, scheduled imports or database connections, depending on what the existing software allows.",
+      },
+      {
+        question: "How do you handle data from our old system?",
+        answer:
+          "We plan the migration early, clean and map the data, run trial imports, and reconcile totals with your team before switching over.",
+      },
+    ],
+    cta: {
+      title: "Running the business across too many spreadsheets?",
+      description: "Tell us how your teams work today and we will map a system that connects them.",
+    },
+    seo: {
+      title: "ERP and Enterprise Systems",
+      description:
+        "ERP implementation, CRM, inventory, HR workflows, reporting dashboards and system integrations by Futurize Technology.",
+    },
+  },
+  {
+    slug: "digital-transformation",
+    title: "Digital Transformation",
+    navLabel: "Digital Transformation",
+    icon: Workflow,
+    shortDescription:
+      "Move manual, paper-based and fragmented processes to digital workflows your teams and customers actually use.",
+    intro:
+      "Digital transformation is not a single product. It is a sequence of practical changes: digitizing a form, automating an approval, giving customers a self-service option, connecting data that lives in different places. We help you choose the changes that matter most, deliver them, and build the habits that make them stick.",
+    deliverables: [
+      "Digital maturity assessment",
+      "Technology roadmap",
+      "Process digitization and automation",
+      "Customer self-service portals",
+      "Cloud migration",
+      "Data consolidation and reporting",
+      "Change management and training",
+    ],
+    highlights: ["Roadmaps", "Automation", "Cloud migration", "Self-service"],
+    process: [
+      {
+        number: "01",
+        title: "Assessment",
+        description:
+          "Interviews and a review of current tools and processes to find where time, money or customer trust is being lost.",
+      },
+      {
+        number: "02",
+        title: "Roadmap",
+        description:
+          "A prioritized plan of changes, sized and sequenced so early wins fund and justify the next steps.",
+      },
+      {
+        number: "03",
+        title: "Delivery",
+        description:
+          "Each initiative delivered as a focused project with clear owners, milestones and success measures agreed up front.",
+      },
+      {
+        number: "04",
+        title: "Adoption",
+        description:
+          "Training, documentation and follow-up, so the new way of working becomes the normal way of working.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Where should a digital transformation start?",
+        answer:
+          "With the process that is most painful or most visible to customers. A focused first project shows value quickly and teaches the organization how to run the next one.",
+      },
+      {
+        question: "Do we need to replace all our existing systems?",
+        answer:
+          "Rarely. Most transformation work connects, automates and extends what you already have, and replaces only what is genuinely holding you back.",
+      },
+      {
+        question: "How do you make sure staff adopt the new tools?",
+        answer:
+          "By involving them early, designing around their real tasks, training them hands-on and staying available after launch to adjust what does not work.",
+      },
+    ],
+    cta: {
+      title: "Ready to modernize how your organization works?",
+      description: "Share where things slow down today and we will suggest a practical first step.",
+    },
+    seo: {
+      title: "Digital Transformation Services",
+      description:
+        "Digital maturity assessments, technology roadmaps, process automation, cloud migration and change management by Futurize Technology.",
+    },
+  },
+  {
     slug: "digital-marketing",
     title: "Digital Marketing",
     navLabel: "Digital Marketing",
@@ -445,6 +592,11 @@ export const services: Service[] = [
     },
   },
 ];
+
+/** Services in display order (see service-slugs.ts). */
+export const services: Service[] = [...serviceList].sort(
+  (a, b) => serviceSlugList.indexOf(a.slug) - serviceSlugList.indexOf(b.slug),
+);
 
 export function getService(slug: string): Service | undefined {
   return services.find((service) => service.slug === slug);

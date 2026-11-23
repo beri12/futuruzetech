@@ -2,10 +2,8 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { gsap, ScrollTrigger } from "@/lib/motion/gsap";
+import { setLenis } from "@/lib/motion/lenis-store";
 
 /**
  * Optional Lenis smooth scrolling, synchronized with GSAP's ticker so
@@ -14,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
  * - Skipped when the user prefers reduced motion or on coarse-pointer
  *   (touch) devices, where native scrolling is better.
  * - Keyboard navigation, anchor links and browser history keep working:
- *   Lenis only intercepts wheel and touch input.
+ *   Lenis only intercepts wheel input.
  * - Cleaned up on unmount.
  */
 export function SmoothScroll() {
@@ -24,10 +22,11 @@ export function SmoothScroll() {
     if (reduce || coarse) return;
 
     const lenis = new Lenis({
-      lerp: 0.12,
+      lerp: 0.11,
       smoothWheel: true,
-      anchors: true,
+      anchors: { offset: -80 },
     });
+    setLenis(lenis);
 
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
@@ -37,6 +36,7 @@ export function SmoothScroll() {
     return () => {
       gsap.ticker.remove(tick);
       lenis.destroy();
+      setLenis(null);
     };
   }, []);
 
