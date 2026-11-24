@@ -6,14 +6,31 @@
 set -euo pipefail
 
 EMAIL="${1:?Usage: sudo bash setup-server.sh you@example.com}"
-REPO="https://github.com/beri12/futuruzetech.git"
+REPO="${REPO:-https://github.com/beri12/futuruzetech.git}"
 BRANCH="${BRANCH:-claude/gifted-keller-mvb44c}"
 APP_DIR=/var/www/futurize
 DOMAIN=futurizetechnology.com
 
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Please run as root: sudo bash setup-server.sh $EMAIL"; exit 1
+fi
+if ! command -v apt-get >/dev/null; then
+  echo "This script supports Ubuntu/Debian (apt-get). Your system:"; cat /etc/os-release 2>/dev/null | head -2
+  echo "Send this output to your developer to get a version for your system."; exit 1
+fi
+
 echo "==> Installing system packages"
 apt-get update -y
 apt-get install -y curl git nginx ufw ca-certificates gnupg
+
+# The build needs about 1.5 GB of memory; add swap on small servers.
+TOTAL_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
+SWAP_MB=$(awk '/SwapTotal/ {print int($2/1024)}' /proc/meminfo)
+if [ $((TOTAL_MB + SWAP_MB)) -lt 2048 ] && [ ! -f /swapfile ]; then
+  echo "==> Low memory (${TOTAL_MB} MB): adding a 2 GB swap file"
+  fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+  grep -q '^/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
 
 echo "==> Installing Node.js 22 LTS"
 if ! command -v node >/dev/null || [ "$(node -v | cut -d. -f1 | tr -d v)" -lt 20 ]; then
@@ -30,7 +47,13 @@ ufw --force enable
 echo "==> Getting the code"
 mkdir -p "$APP_DIR/shared"
 if [ ! -d "$APP_DIR/repo/.git" ]; then
-  git clone --branch "$BRANCH" "$REPO" "$APP_DIR/repo"
+  if ! GIT_TERMINAL_PROMPT=0 git clone --branch "$BRANCH" "$REPO" "$APP_DIR/repo"; then
+    echo
+    echo "Could not download the code. The GitHub repository is probably private."
+    echo "Either make it public, or give this server read access (see DEPLOY.md,"
+    echo "'Private repository'), then run this script again with REPO=<clone url>."
+    exit 1
+  fi
 fi
 
 if [ ! -f "$APP_DIR/shared/.env.production" ]; then
@@ -55,9 +78,22 @@ pm2 startup systemd -u root --hp /root >/dev/null
 pm2 save
 
 echo "==> HTTPS certificate (Let's Encrypt)"
-apt-get install -y certbot python3-certbot-nginx
-certbot --nginx --non-interactive --agree-tos -m "$EMAIL" \
-  -d "$DOMAIN" -d "www.$DOMAIN" --redirect
+apt-get install -y certbot python3-certbot-nginx dnsutils
+SERVER_IP=$(curl -fsS -4 https://api.ipify.org || true)
+DNS_IP=$(dig +short "$DOMAIN" A | tail -1)
+if [ -n "$SERVER_IP" ] && [ "$DNS_IP" != "$SERVER_IP" ]; then
+  echo "    $DOMAIN points to '$DNS_IP' but this server's public IP is '$SERVER_IP'."
+  echo "    The site is running over HTTP; fix the A record, wait for it to update,"
+  echo "    then run:  sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --redirect -m $EMAIL --agree-tos"
+  exit 0
+fi
+if ! certbot --nginx --non-interactive --agree-tos -m "$EMAIL" \
+  -d "$DOMAIN" -d "www.$DOMAIN" --redirect; then
+  echo "    Certificate request failed. Usually port 80 is blocked by your hosting"
+  echo "    provider's firewall. Open ports 80 and 443 there, then run:"
+  echo "    sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --redirect -m $EMAIL --agree-tos"
+  exit 1
+fi
 
 echo
 echo "Done. Visit https://$DOMAIN"
