@@ -120,6 +120,8 @@ Browser checks performed with Playwright against a production build (`npm run bu
 
 ## Deployment
 
+Production runs at **https://futurizetechnology.com** on a self-managed server (Nginx + PM2 + Let's Encrypt). Step-by-step instructions and the scripts are in [DEPLOY.md](DEPLOY.md) and `deploy/`. The build uses `output: "standalone"`.
+
 Any Node.js host works (the app uses the Node runtime; no edge-only APIs).
 
 **Vercel / similar platforms**: import the repository, set the environment variables, deploy. Build command `npm run build`, output handled by the platform.

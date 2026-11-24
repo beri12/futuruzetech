@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /*
+   * Self-contained server bundle in .next/standalone (only the runtime
+   * dependencies the app uses). Deployed with deploy/deploy.sh and run by PM2
+   * behind Nginx; see DEPLOY.md.
+   */
+  output: "standalone",
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
