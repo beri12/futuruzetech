@@ -52,8 +52,8 @@ sudo bash /var/www/futurize/repo/deploy/deploy.sh
 ```
 
 At minimum set `NEXT_PUBLIC_SITE_URL=https://futurizetechnology.com` (already
-the default) and, for the contact form, `RESEND_API_KEY`, `CONTACT_EMAIL` and
-`EMAIL_FROM` (see README → Contact form setup).
+the default) and, for the contact form, `RESEND_API_KEY` (and optionally `CONTACT_EMAIL` and
+`EMAIL_FROM`; see README → Contact form setup).
 
 ## Updating the site later
 

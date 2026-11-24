@@ -5,18 +5,23 @@ import { budgetOptions, labelFor, serviceOptions, timelineOptions, type ContactI
 /**
  * Email delivery through Resend.
  *
- * Required environment variables (server-side only, never exposed):
- *   RESEND_API_KEY   API key from https://resend.com
- *   CONTACT_EMAIL    Inbox that receives project inquiries
- *   EMAIL_FROM       Verified sender, e.g. "Futurize Technology <hello@yourdomain.com>"
+ * Environment variables (server-side only, never exposed):
+ *   RESEND_API_KEY   Required. API key from https://resend.com
+ *   CONTACT_EMAIL    Inbox that receives project inquiries (default below)
+ *   EMAIL_FROM       Sender, e.g. "Futurize Technology <hello@yourdomain.com>".
+ *                    Defaults to Resend's shared test sender, which can only
+ *                    deliver to the email address of the Resend account owner.
  *
- * When they are missing, `isEmailConfigured()` is false and the API returns an
- * actionable configuration error instead of pretending to send.
+ * When the API key is missing, `isEmailConfigured()` is false and the API
+ * returns an actionable configuration error instead of pretending to send.
  */
 
+export const DEFAULT_CONTACT_EMAIL = "bekerberiso@gmail.com";
+export const DEFAULT_EMAIL_FROM = "Futurize Technology <onboarding@resend.dev>";
+
 const apiKey = process.env.RESEND_API_KEY;
-const contactEmail = process.env.CONTACT_EMAIL;
-const fromEmail = process.env.EMAIL_FROM;
+const contactEmail = process.env.CONTACT_EMAIL?.trim() || DEFAULT_CONTACT_EMAIL;
+const fromEmail = process.env.EMAIL_FROM?.trim() || DEFAULT_EMAIL_FROM;
 
 export function isEmailConfigured(): boolean {
   return Boolean(apiKey && contactEmail && fromEmail);
@@ -25,8 +30,6 @@ export function isEmailConfigured(): boolean {
 export function missingEmailConfig(): string[] {
   const missing: string[] = [];
   if (!apiKey) missing.push("RESEND_API_KEY");
-  if (!contactEmail) missing.push("CONTACT_EMAIL");
-  if (!fromEmail) missing.push("EMAIL_FROM");
   return missing;
 }
 
@@ -45,6 +48,12 @@ export async function sendContactEmail(input: ContactInput): Promise<{ id: strin
   }
   const resend = new Resend(apiKey);
 
+  const received = new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Africa/Addis_Ababa",
+  }).format(new Date());
+
   const rows: Array<[string, string]> = [
     ["Name", input.name],
     ["Email", input.email],
@@ -52,6 +61,7 @@ export async function sendContactEmail(input: ContactInput): Promise<{ id: strin
     ["Service", labelFor(serviceOptions, input.service)],
     ["Budget", labelFor(budgetOptions, input.budget)],
     ["Timeline", labelFor(timelineOptions, input.timeline)],
+    ["Received", `${received} (Addis Ababa time)`],
   ];
 
   const text = [
@@ -61,6 +71,8 @@ export async function sendContactEmail(input: ContactInput): Promise<{ id: strin
     "",
     "Project description:",
     input.message,
+    "",
+    `Reply to this email to answer ${input.name} directly (${input.email}).`,
   ].join("\n");
 
   const html = `
@@ -75,14 +87,21 @@ export async function sendContactEmail(input: ContactInput): Promise<{ id: strin
           .join("")}
       </table>
       <h3 style="margin:20px 0 8px">Project description</h3>
-      <p style="white-space:pre-wrap;margin:0">${escapeHtml(input.message)}</p>
+      <p style="white-space:pre-wrap;margin:0;padding:12px 14px;background:#F3F6F4;border-radius:8px">${escapeHtml(input.message)}</p>
+      <p style="margin:24px 0 0">
+        <a href="mailto:${encodeURIComponent(input.email)}?subject=${encodeURIComponent(`Re: your inquiry to ${siteConfig.name}`)}"
+           style="display:inline-block;padding:10px 18px;background:#132019;color:#ffffff;text-decoration:none;border-radius:999px;font-weight:600">
+          Reply to ${escapeHtml(input.name)}
+        </a>
+      </p>
+      <p style="margin:16px 0 0;font-size:13px;color:#4B5E52">You can also just press Reply: it goes straight to ${escapeHtml(input.email)}.</p>
     </div>`;
 
   const { data, error } = await resend.emails.send({
     from: fromEmail,
     to: [contactEmail],
     replyTo: input.email,
-    subject: `Project inquiry: ${labelFor(serviceOptions, input.service)} from ${input.name}`,
+    subject: `New inquiry from ${input.name}${input.company ? ` (${input.company})` : ""}: ${labelFor(serviceOptions, input.service)}`,
     text,
     html,
   });

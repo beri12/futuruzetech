@@ -77,7 +77,8 @@ See `.env.example` for every variable with comments. Summary:
 | `NEXT_PUBLIC_SITE_URL` | Production | Canonical URL for metadata, sitemap, robots and JSON-LD |
 | `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_CONTACT_PHONE`, `NEXT_PUBLIC_CONTACT_LOCATION` | Optional | Shown on the contact section only when set |
 | `NEXT_PUBLIC_SOCIAL_*` | Optional | Footer social icons appear only for configured profiles |
-| `RESEND_API_KEY`, `CONTACT_EMAIL`, `EMAIL_FROM` | For the contact form | Email delivery through Resend |
+| `RESEND_API_KEY` | For the contact form | Email delivery through Resend |
+| `CONTACT_EMAIL`, `EMAIL_FROM` | Optional | Inquiry inbox (default `bekerberiso@gmail.com`) and sender (default Resend test sender) |
 | `NEXT_PUBLIC_NEWSLETTER_ENABLED`, `RESEND_AUDIENCE_ID` | Optional | Newsletter signup on `/blog` |
 | `RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW_MS` | Optional | Form rate limiting (default 5 per 10 minutes) |
 
@@ -85,11 +86,12 @@ Secrets (`RESEND_*`, `CONTACT_EMAIL`, `EMAIL_FROM`) are only read on the server 
 
 ## Contact form setup
 
-1. Create a [Resend](https://resend.com) account and verify your sending domain.
-2. Set `RESEND_API_KEY`, `CONTACT_EMAIL` (where inquiries arrive) and `EMAIL_FROM` (a verified sender).
+1. Create a [Resend](https://resend.com) account with `bekerberiso@gmail.com` and create an API key.
+2. Set `RESEND_API_KEY`. Inquiries go to `bekerberiso@gmail.com` by default (override with `CONTACT_EMAIL`).
+   Until you verify your own domain in Resend, the default sender `onboarding@resend.dev` is used, which only delivers to the Resend account's own email. After verifying `futurizetechnology.com`, set `EMAIL_FROM` (e.g. `Futurize Technology <hello@futurizetechnology.com>`).
 3. Restart the server. Submit the form on `/contact`; the inquiry arrives as an email with `Reply-To` set to the sender.
 
-Until these are set, `POST /api/contact` responds with HTTP 503 and `code: "NOT_CONFIGURED"`, and the form shows an honest error with the public contact email (if configured). There is no fake success state.
+Until the API key is set, `POST /api/contact` responds with HTTP 503 and `code: "NOT_CONFIGURED"`, and the form shows an honest error with the public contact email (if configured). There is no fake success state.
 
 Protection in place: shared Zod schema on client and server, a honeypot field (bots receive a silent `200`), request-size limits, and an in-memory rate limiter keyed by client IP. The limiter is per server instance; on serverless platforms swap `src/lib/rate-limit.ts` for a shared store (for example Upstash Redis) if you need strict global limits.
 
